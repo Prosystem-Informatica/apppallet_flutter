@@ -2,6 +2,7 @@ import 'package:apppallet_flutter/app/modules/login/cubit/login_bloc_cubit.dart'
 import 'package:apppallet_flutter/app/modules/login/cubit/login_bloc_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 import '../../core/ui/helpers/messages.dart';
 
@@ -50,14 +51,12 @@ class _LoginPageState extends State<LoginPage> with Messages<LoginPage> {
         state.status.matchAny(
           success: () async {
             showSuccess(state.successMessage ?? "Login realizado com sucesso");
-            // Get.toNamed("/home");
+            Get.offAllNamed("/home");
           },
           error: () {
             showError(state.errorMessage ?? "Erro não informado");
           },
-          any: () {
-            //Get.toNamed("/home");
-          },
+          any: () {},
         );
       },
       builder: (context, state) {
