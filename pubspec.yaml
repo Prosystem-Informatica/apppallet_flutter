@@ -46,6 +46,7 @@ dependencies:
   top_snackbar_flutter: ^3.2.0
   local_auth: ^2.3.0
   shared_preferences: ^2.2.2
+  brasil_fields: ^1.15.0
 
 dev_dependencies:
   flutter_test:

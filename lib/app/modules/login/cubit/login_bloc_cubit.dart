@@ -11,12 +11,13 @@ class LoginBlocCubit extends Cubit<LoginBlocState> {
   Future<void> checkUrl() async {
     try {
       emit(state.copyWith(status: LoginStateStatus.loading));
-      final loginValidation = await loginRepository.checkUrl();
-    } on Exception {
+
+      await loginRepository.checkUrl();
+    } catch (e) {
       emit(
         state.copyWith(
           status: LoginStateStatus.error,
-          errorMessage: "Erro ao efetuar Login",
+          errorMessage: e.toString(),
         ),
       );
     }
@@ -24,12 +25,31 @@ class LoginBlocCubit extends Cubit<LoginBlocState> {
 
   Future<void> login(String login, String password) async {
     try {
+      emit(state.copyWith(status: LoginStateStatus.loading));
 
-    } on Exception {
+      final res = await loginRepository.login(login, password);
+      if (res.validado == "T") {
+        emit(
+          state.copyWith(
+            status: LoginStateStatus.success,
+            loginModel: res,
+            successMessage: "Login realizado com sucesso",
+          ),
+        );
+      } else if (res.validado == "F") {
+        emit(
+          state.copyWith(
+            status: LoginStateStatus.success,
+            loginModel: res,
+            successMessage: "Usuário ou Senha incorreto !",
+          ),
+        );
+      }
+    } catch (e) {
       emit(
         state.copyWith(
           status: LoginStateStatus.error,
-          errorMessage: "Erro ao efetuar Login",
+          errorMessage: e.toString(),
         ),
       );
     }

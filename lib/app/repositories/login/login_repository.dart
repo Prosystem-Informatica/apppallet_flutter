@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/rest/rest_client.dart';
 import 'i_login_repository.dart';
+import 'model/login_model.dart';
 
 class LoginRepository implements ILoginRepository {
   final RestClient _rest;
@@ -15,9 +16,9 @@ class LoginRepository implements ILoginRepository {
   Future<void> checkUrl() async {
     try {
       prefs = await SharedPreferences.getInstance();
-
       var url =
-          'http://prosystem.dyndns-work.com:9090/datasnap/rest/TserverAPPnfe/LoginEmpresa/10329033000133';
+          'http://prosystem.dyndns-work.com:9090/datasnap/rest/TserverAPPnfe/LoginEmpresa/09334805000146';
+
       var response = await http.get(Uri.parse(url));
 
       var jsonData = jsonDecode(response.body);
@@ -32,7 +33,7 @@ class LoginRepository implements ILoginRepository {
         jsonData[0]['PORTA'].toString().toLowerCase(),
       );
 
-      return;
+      return jsonData;
     } catch (e) {
       log(e.toString());
       //return ValidationModel();
@@ -40,27 +41,25 @@ class LoginRepository implements ILoginRepository {
   }
 
   @override
-  Future<void> login(String login, String password) async {
+  Future<LoginModel> login(String login, String password) async {
     try {
       prefs = await SharedPreferences.getInstance();
       var host = await prefs.getString("host");
       var port = await prefs.getString("port");
-
-      print("Host > ${host}");
-
       var url =
-          '$host:$port/datasnap/rest/TServerAPPecf/LoginApp/$login/$password';
+          'http://$host:$port/datasnap/rest/TserverAPPnfe/LoginPalete/$login/$password';
+
       var response = await http.get(Uri.parse(url));
 
       var jsonData = jsonDecode(response.body);
       print("Json > ${jsonData}");
 
-      // var res = await LoginModel.fromJson(jsonData[0]);
+      var res = await LoginModel.fromJson(jsonData[0]);
 
-      return;
+      return res;
     } catch (e) {
       log(e.toString());
-      return;
+      return LoginModel();
       //return ValidationModel();
     }
   }

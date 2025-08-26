@@ -10,7 +10,7 @@ class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: "E-commerce",
+      title: "App Pallet",
       initialRoute: Routes.INITIAL,
       getPages: AppPages.pages,
       supportedLocales: const [Locale('pt', 'BR')],
