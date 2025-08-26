@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,7 +15,9 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(title: const Text("Home")),
       body: Column(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Get.toNamed('/load');
+        },
         child: Icon(Icons.fire_truck_outlined),
       ),
     );
