@@ -12,9 +12,13 @@ class _HomePageState extends State<HomePage> {
   Widget _buildDashboardCard({
     required String title,
     required String value,
-    required Color color,
     required IconData icon,
   }) {
+
+    final ColorScheme colorScheme = Theme
+        .of(context)
+        .colorScheme;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
@@ -23,19 +27,22 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: color),
+            Icon(icon, size: 40, color: colorScheme.primary),
             const SizedBox(height: 12),
             Text(
               value,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: color,
+                // O texto do valor também usa a cor primária do tema
+                color: colorScheme.primary,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               title,
+              // Opcional: você pode definir a cor do título usando o colorScheme também
+              // style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant),
               style: const TextStyle(fontSize: 16),
             ),
           ],
@@ -46,6 +53,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(title: const Text("Home")),
       body: Padding(
@@ -58,33 +66,28 @@ class _HomePageState extends State<HomePage> {
             _buildDashboardCard(
               title: "Total Viagens",
               value: "120",
-              color: colorScheme.primary,
               icon: Icons.directions_bus,
             ),
             _buildDashboardCard(
               title: "Normais",
               value: "80",
-              color: Colors.green,
               icon: Icons.check_circle_outline,
             ),
             _buildDashboardCard(
               title: "Extras",
               value: "25",
-              color: Colors.orange,
               icon: Icons.add_circle_outline,
             ),
             _buildDashboardCard(
               title: "Devoluções",
               value: "15",
-              color: Colors.red,
               icon: Icons.undo,
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-        },
+        onPressed: () {},
         child: const Icon(Icons.fire_truck_outlined),
       ),
     );
