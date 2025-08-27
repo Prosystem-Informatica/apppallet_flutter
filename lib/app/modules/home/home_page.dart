@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+
+
+import 'cubit/home_bloc_cubit.dart';
+import '../../repositories/home_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,17 +14,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   Widget _buildDashboardCard({
     required String title,
     required String value,
     required IconData icon,
   }) {
-
     final ColorScheme colorScheme = Theme
         .of(context)
         .colorScheme;
-
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
@@ -35,15 +37,12 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                // O texto do valor também usa a cor primária do tema
                 color: colorScheme.primary,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               title,
-              // Opcional: você pode definir a cor do título usando o colorScheme também
-              // style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant),
               style: const TextStyle(fontSize: 16),
             ),
           ],
@@ -54,43 +53,65 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Home")),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          children: [
-            _buildDashboardCard(
-              title: "Total Viagens",
-              value: "120",
-              icon: Icons.directions_bus,
-            ),
-            _buildDashboardCard(
-              title: "Normais",
-              value: "80",
-              icon: Icons.check_circle_outline,
-            ),
-            _buildDashboardCard(
-              title: "Extras",
-              value: "25",
-              icon: Icons.add_circle_outline,
-            ),
-            _buildDashboardCard(
-              title: "Devoluções",
-              value: "15",
-              icon: Icons.undo,
-            ),
-          ],
+    return BlocProvider(
+      create: (context) =>
+      HomeCubit(RepositoryProvider.of<HomeRepository>(context))
+        ..fetchDashboard(),
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Home")),
+        body: BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            if (state.status == HomeStatus.loading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state.status == HomeStatus.error) {
+              return Center(
+                child: Text(state.errorMessage ??
+                    "Ocorreu um erro ao carregar os dados."),
+              );
+            } else
+            if (state.status == HomeStatus.success && state.dashboard != null) {
+              final dashboardData = state.dashboard!;
+              return Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  children: [
+                    _buildDashboardCard(
+                      title: "Total Viagens",
+                      value: dashboardData.totalViagens,
+                      icon: Icons.directions_bus,
+                    ),
+                    _buildDashboardCard(
+                      title: "Normais",
+                      value: dashboardData.viagensNormal,
+                      icon: Icons.check_circle_outline,
+                    ),
+                    _buildDashboardCard(
+                      title: "Extras",
+                      value: dashboardData.viagensExtra,
+                      icon: Icons.add_circle_outline,
+                    ),
+                    _buildDashboardCard(
+                      title: "Devoluções",
+                      value: dashboardData.totalDev,
+                      icon: Icons.undo,
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return const Center(child: Text("Nenhum dado para exibir."));
+            }
+          },
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.toNamed('/load');
-        },
-        child: Icon(Icons.fire_truck_outlined),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Get.toNamed('/load');
+          },
+          child: const Icon(Icons.fire_truck_outlined),
+        ),
       ),
     );
   }
