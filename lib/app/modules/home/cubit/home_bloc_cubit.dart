@@ -1,26 +1,26 @@
-import 'package:equatable/equatable.dart';
+import 'package:apppallet_flutter/app/repositories/home/home_repository.dart';
 import 'package:bloc/bloc.dart';
-import '../../../repositories/home_repository.dart';
 
-part 'home_bloc_state.dart';
+import 'home_bloc_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
-  final HomeRepository repository;
-  HomeCubit(this.repository) : super(HomeState.initial());
 
-  Future<void> fetchDashboard() async {
-    emit(state.copyWith(status: HomeStatus.loading));
+class HomeBlocCubit extends Cubit<HomeBlocState> {
+  final HomeRepository homeRepository;
+  HomeBlocCubit({required this.homeRepository})
+      : super(HomeBlocState.initial());
+
+  Future<void> checkUrl() async {
     try {
-      final data = await repository.fetchDashboard();
-      emit(state.copyWith(
-        status: HomeStatus.success,
-        dashboard: data,
-      ));
+      emit(state.copyWith(status: HomeStateStatus.loading));
+
+      await homeRepository.checkUrl();
     } catch (e) {
-      emit(state.copyWith(
-        status: HomeStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: HomeStateStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }
