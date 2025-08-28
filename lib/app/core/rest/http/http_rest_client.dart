@@ -9,8 +9,8 @@ class HttpRestClient implements RestClient {
   final Map<String, String> defaultHeaders;
 
   HttpRestClient({required this.baseUrl})
-    : rest = http.Client(),
-      defaultHeaders = {'content-type': 'application/json'};
+      : rest = http.Client(),
+        defaultHeaders = {'content-type': 'application/json'};
 
   @override
   RestClient auth() {
@@ -20,10 +20,10 @@ class HttpRestClient implements RestClient {
 
   @override
   Future<RestClientResponse<T>> get<T>(
-    String path, {
-    Map<String, dynamic>? queryParameters,
-    Map<String, String>? headers,
-  }) async {
+      String path, {
+        Map<String, dynamic>? queryParameters,
+        Map<String, String>? headers,
+      }) async {
     log("Url da API > ${baseUrl} + ${path}");
     final uri = Uri.https(baseUrl, path, queryParameters);
     final response = await rest.get(uri, headers: joinHeaders(headers));
@@ -33,11 +33,11 @@ class HttpRestClient implements RestClient {
 
   @override
   Future<RestClientResponse<T>> post<T>(
-    String path, {
-    data,
-    Map<String, dynamic>? queryParameters,
-    Map<String, String>? headers,
-  }) async {
+      String path, {
+        data,
+        Map<String, dynamic>? queryParameters,
+        Map<String, String>? headers,
+      }) async {
     try {
       final uri = Uri.https(baseUrl, '/API' + path, queryParameters);
       final response = await rest.post(

@@ -1,4 +1,5 @@
 import 'package:apppallet_flutter/app/core/rest/rest_client_response.dart';
+import 'package:apppallet_flutter/app/core/rest/rest_client_response.dart';
 
 abstract class RestClient {
   RestClient auth();

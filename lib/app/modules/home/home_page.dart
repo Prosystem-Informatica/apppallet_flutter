@@ -2,23 +2,17 @@ import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-
   Widget _buildDashboardCard({
     required String title,
     required String value,
     required IconData icon,
   }) {
-
-    final ColorScheme colorScheme = Theme
-        .of(context)
-        .colorScheme;
-
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
@@ -34,17 +28,11 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                // O texto do valor também usa a cor primária do tema
                 color: colorScheme.primary,
               ),
             ),
             const SizedBox(height: 6),
-            Text(
-              title,
-              // Opcional: você pode definir a cor do título usando o colorScheme também
-              // style: TextStyle(fontSize: 16, color: colorScheme.onSurfaceVariant),
-              style: const TextStyle(fontSize: 16),
-            ),
+            Text(title, style: const TextStyle(fontSize: 16)),
           ],
         ),
       ),
@@ -53,7 +41,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(title: const Text("Home")),
       body: Padding(

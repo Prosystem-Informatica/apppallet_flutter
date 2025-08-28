@@ -1,3 +1,4 @@
+import 'package:apppallet_flutter/app/repositories/home/home_repository.dart';
 import 'package:apppallet_flutter/app/repositories/login/login_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +8,7 @@ import 'app_widget.dart';
 import 'core/helpers/environments.dart';
 import 'core/rest/http/http_rest_client.dart';
 import 'core/rest/rest_client.dart';
+import 'modules/home/cubit/home_bloc_cubit.dart';
 import 'modules/login/cubit/login_bloc_cubit.dart';
 
 class BlocInjection extends StatelessWidget {
@@ -26,6 +28,12 @@ class BlocInjection extends StatelessWidget {
               (_) => LoginBlocCubit(
                 loginRepository: LoginRepository(rest: _apiRestClient),
               ),
+        child: BlocProvider<HomeBlocCubit>(
+    create:
+    (_) => HomeBlocCubit(
+    homeRepository: HomeRepository(rest: _apiRestClient),
+    ),
+        ),
         ),
       ],
       child: const AppWidget(),
