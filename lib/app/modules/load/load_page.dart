@@ -68,6 +68,8 @@ class _LoadPageState extends State<LoadPage> with Messages<LoadPage> {
                 "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}";
             cargaController.text = state.roadModel!.id ?? "";
             placaController.text = state.roadModel!.placa ?? "";
+            entregaController.text = state.roadModel!.quant ?? "";
+            devolucaoController.text = state.roadModel!.quantDv ?? "";
             state.successMessage != null
                 ? showSuccess(state.successMessage ?? "")
                 : null;
