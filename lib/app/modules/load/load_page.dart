@@ -70,7 +70,7 @@ class _LoadPageState extends State<LoadPage> with Messages<LoadPage> {
             placaController.text = state.roadModel!.placa ?? "";
             entregaController.text = state.roadModel!.quant ?? "";
             devolucaoController.text = state.roadModel!.quantDv ?? "";
-            state.successMessage != null
+            state.roadModel!.id == "0"
                 ? showSuccess(state.successMessage ?? "")
                 : null;
           },

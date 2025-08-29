@@ -18,6 +18,7 @@ class HomeRepository {
       final url =
           'http://$host:$port/datasnap/rest/TServerAPPnfe/Viagens_Dev/$empresa/$codigo';
       final response = await http.get(Uri.parse(url));
+      print("RESPONSE > ${response.body}");
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         return TravelModel.fromJson(jsonData);

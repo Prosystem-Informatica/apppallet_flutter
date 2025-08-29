@@ -14,7 +14,8 @@ class LoadBlocCubit extends Cubit<LoadBlocState> {
       emit(state.copyWith(status: LoadStateStatus.loading));
 
       var res = await loadRepository.loadData();
-      if (res.id == '0') {
+      print("Cubit > ${res.id}");
+      if (res.id == '0' || res.id == null) {
         emit(
           state.copyWith(
             roadModel: res,
@@ -23,8 +24,10 @@ class LoadBlocCubit extends Cubit<LoadBlocState> {
           ),
         );
       }
-      print("Oq temos no cubit > ${res.id}");
-      emit(state.copyWith(roadModel: res, status: LoadStateStatus.success));
+      if (res.id != '0' || res.id != null) {
+        print("Oq temos no cubit > ${res.id}");
+        emit(state.copyWith(roadModel: res, status: LoadStateStatus.success));
+      }
     } catch (e) {
       emit(
         state.copyWith(
