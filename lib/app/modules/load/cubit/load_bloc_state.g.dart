@@ -11,7 +11,8 @@ extension LoadStateStatusMatch on LoadStateStatus {
       {required T Function() initial,
       required T Function() loading,
       required T Function() error,
-      required T Function() success}) {
+      required T Function() success,
+      required T Function() saved}) {
     final v = this;
     if (v == LoadStateStatus.initial) {
       return initial();
@@ -29,6 +30,10 @@ extension LoadStateStatusMatch on LoadStateStatus {
       return success();
     }
 
+    if (v == LoadStateStatus.saved) {
+      return saved();
+    }
+
     throw Exception('LoadStateStatus.match failed, found no match for: $this');
   }
 
@@ -37,7 +42,8 @@ extension LoadStateStatusMatch on LoadStateStatus {
       T Function()? initial,
       T Function()? loading,
       T Function()? error,
-      T Function()? success}) {
+      T Function()? success,
+      T Function()? saved}) {
     final v = this;
     if (v == LoadStateStatus.initial && initial != null) {
       return initial();
@@ -53,6 +59,10 @@ extension LoadStateStatusMatch on LoadStateStatus {
 
     if (v == LoadStateStatus.success && success != null) {
       return success();
+    }
+
+    if (v == LoadStateStatus.saved && saved != null) {
+      return saved();
     }
 
     return any();

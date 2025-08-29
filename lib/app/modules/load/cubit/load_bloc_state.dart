@@ -7,7 +7,7 @@ import '../../../repositories/login/model/login_model.dart';
 part 'load_bloc_state.g.dart';
 
 @match
-enum LoadStateStatus { initial, loading, error, success }
+enum LoadStateStatus { initial, loading, error, success, saved }
 
 class LoadBlocState extends Equatable {
   final RoadModel? roadModel;

@@ -2,6 +2,7 @@ import 'package:apppallet_flutter/app/core/ui/helpers/messages.dart';
 import 'package:apppallet_flutter/app/modules/load/cubit/load_bloc_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 import 'cubit/load_bloc_cubit.dart';
 
@@ -70,6 +71,10 @@ class _LoadPageState extends State<LoadPage> with Messages<LoadPage> {
             state.successMessage != null
                 ? showSuccess(state.successMessage ?? "")
                 : null;
+          },
+          saved: () {
+            showSuccess(state.successMessage ?? "Salvo com sucesso !!!");
+            Get.offAllNamed('/home');
           },
           error: () {
             showError(state.errorMessage ?? "Erro não informado");

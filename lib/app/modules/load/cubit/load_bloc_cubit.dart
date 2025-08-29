@@ -44,6 +44,12 @@ class LoadBlocCubit extends Cubit<LoadBlocState> {
       emit(state.copyWith(status: LoadStateStatus.loading));
 
       final res = await loadRepository.sendData(idCarga, entrega, devolucao);
+      emit(
+        state.copyWith(
+          status: LoadStateStatus.saved,
+          successMessage: "Salvo com sucesso !!",
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
