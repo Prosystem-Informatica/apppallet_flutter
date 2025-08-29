@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
-
 import 'cubit/home_bloc_cubit.dart';
-import '../../repositories/home_repository.dart';
+import '../../repositories/home/home_repository.dart';
+import 'cubit/home_bloc_state.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,9 +19,7 @@ class _HomePageState extends State<HomePage> {
     required String value,
     required IconData icon,
   }) {
-    final ColorScheme colorScheme = Theme
-        .of(context)
-        .colorScheme;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
@@ -41,10 +39,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 6),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 16),
-            ),
+            Text(title, style: const TextStyle(fontSize: 16)),
           ],
         ),
       ),
@@ -54,23 +49,24 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-      HomeCubit(RepositoryProvider.of<HomeRepository>(context))
-        ..fetchDashboard(),
+      create:
+          (context) =>
+              HomeBlocCubit(homeRepository: HomeRepository())..fetchDashboard(),
       child: Scaffold(
         appBar: AppBar(title: const Text("Home")),
-        body: BlocBuilder<HomeCubit, HomeState>(
+        body: BlocBuilder<HomeBlocCubit, HomeBlocState>(
           builder: (context, state) {
-            if (state.status == HomeStatus.loading) {
+            if (state.status == HomeStateStatus.loading) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state.status == HomeStatus.error) {
+            } else if (state.status == HomeStateStatus.error) {
               return Center(
-                child: Text(state.errorMessage ??
-                    "Ocorreu um erro ao carregar os dados."),
+                child: Text(
+                  state.errorMessage ?? "Ocorreu um erro ao carregar os dados.",
+                ),
               );
-            } else
-            if (state.status == HomeStatus.success && state.dashboard != null) {
-              final dashboardData = state.dashboard!;
+            } else if (state.status == HomeStateStatus.success &&
+                state.travelModel != null) {
+              final dashboardData = state.travelModel!;
               return Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: GridView.count(
@@ -80,22 +76,22 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     _buildDashboardCard(
                       title: "Total Viagens",
-                      value: dashboardData.totalViagens,
+                      value: dashboardData.totalViagens ?? "-",
                       icon: Icons.directions_bus,
                     ),
                     _buildDashboardCard(
                       title: "Normais",
-                      value: dashboardData.viagensNormal,
+                      value: dashboardData.viagensNormal ?? "-",
                       icon: Icons.check_circle_outline,
                     ),
                     _buildDashboardCard(
                       title: "Extras",
-                      value: dashboardData.viagensExtra,
+                      value: dashboardData.viagensExtra ?? "-",
                       icon: Icons.add_circle_outline,
                     ),
                     _buildDashboardCard(
                       title: "Devoluções",
-                      value: dashboardData.totalDev,
+                      value: dashboardData.totalDev ?? "-",
                       icon: Icons.undo,
                     ),
                   ],

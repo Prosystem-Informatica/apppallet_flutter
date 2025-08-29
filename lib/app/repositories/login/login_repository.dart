@@ -22,7 +22,7 @@ class LoginRepository implements ILoginRepository {
       var response = await http.get(Uri.parse(url));
 
       var jsonData = jsonDecode(response.body);
-      print("Json > ${jsonData}");
+      print("Json do check> ${jsonData}");
 
       await prefs.setString(
         'host',
@@ -52,7 +52,17 @@ class LoginRepository implements ILoginRepository {
       var response = await http.get(Uri.parse(url));
 
       var jsonData = jsonDecode(response.body);
-      print("Json > ${jsonData}");
+      print("Json do login > ${jsonData}");
+
+      await prefs.setString(
+        'codigo',
+        jsonData[0]['CODIGO'].toString().toLowerCase(),
+      );
+
+      await prefs.setString(
+        'empresa',
+        jsonData[0]['EMPRESA'].toString().toLowerCase(),
+      );
 
       var res = await LoginModel.fromJson(jsonData[0]);
 

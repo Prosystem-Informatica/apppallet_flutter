@@ -1,58 +1,52 @@
-part of 'home_bloc_cubit.dart';
+import 'package:equatable/equatable.dart';
+import 'package:match/match.dart';
 
-enum HomeStatus { initial, loading, success, error }
+import '../../../repositories/home/model/travel_model.dart';
+import '../../../repositories/login/model/login_model.dart';
 
-class DashboardModel extends Equatable {
-  final String totalViagens;
-  final String viagensNormal;
-  final String viagensExtra;
-  final String totalDev;
+part 'home_bloc_state.g.dart';
 
-  const DashboardModel({
-    required this.totalViagens,
-    required this.viagensNormal,
-    required this.viagensExtra,
-    required this.totalDev,
-  });
+@match
+enum HomeStateStatus { initial, loading, error, success }
 
-  factory DashboardModel.fromJson(Map<String, dynamic> json) {
-    return DashboardModel(
-      totalViagens: json['TOTAL_VIAGENS'].toString(),
-      viagensNormal: json['VIAGENS_NORMAL'].toString(),
-      viagensExtra: json['VIAGENS_EXTRA'].toString(),
-      totalDev: json['TOTAL_DEV'].toString(),
-    );
-  }
-
-  @override
-  List<Object?> get props => [totalViagens, viagensNormal, viagensExtra, totalDev];
-}
-
-class HomeState extends Equatable {
-  final HomeStatus status;
-  final DashboardModel? dashboard;
+class HomeBlocState extends Equatable {
+  final TravelModel? travelModel;
+  final HomeStateStatus status;
   final String? errorMessage;
+  final String? successMessage;
 
-  const HomeState({
+  const HomeBlocState({
+    this.travelModel,
     required this.status,
-    this.dashboard,
     this.errorMessage,
+    this.successMessage,
   });
 
-  factory HomeState.initial() => const HomeState(status: HomeStatus.initial);
-
-  HomeState copyWith({
-    HomeStatus? status,
-    DashboardModel? dashboard,
-    String? errorMessage,
-  }) {
-    return HomeState(
-      status: status ?? this.status,
-      dashboard: dashboard ?? this.dashboard,
-      errorMessage: errorMessage ?? this.errorMessage,
-    );
-  }
+  HomeBlocState.initial()
+    : travelModel = TravelModel(),
+      status = HomeStateStatus.initial,
+      errorMessage = null,
+      successMessage = null;
 
   @override
-  List<Object?> get props => [status, dashboard, errorMessage];
+  List<Object?> get props => [
+    travelModel,
+    status,
+    errorMessage,
+    successMessage,
+  ];
+
+  HomeBlocState copyWith({
+    TravelModel? travelModel,
+    HomeStateStatus? status,
+    String? errorMessage,
+    String? successMessage,
+  }) {
+    return HomeBlocState(
+      travelModel: travelModel ?? this.travelModel,
+      status: status ?? this.status,
+      errorMessage: errorMessage ?? this.errorMessage,
+      successMessage: successMessage ?? this.successMessage,
+    );
+  }
 }

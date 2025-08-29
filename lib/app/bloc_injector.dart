@@ -1,4 +1,5 @@
-import 'package:apppallet_flutter/app/repositories/home_repository.dart';
+import 'package:apppallet_flutter/app/repositories/home/home_repository.dart';
+import 'package:apppallet_flutter/app/repositories/load/load_repository.dart';
 import 'package:apppallet_flutter/app/repositories/login/login_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,8 +9,9 @@ import 'app_widget.dart';
 import 'core/helpers/environments.dart';
 import 'core/rest/http/http_rest_client.dart';
 import 'core/rest/rest_client.dart';
+import 'modules/home/cubit/home_bloc_cubit.dart';
+import 'modules/load/cubit/load_bloc_cubit.dart';
 import 'modules/login/cubit/login_bloc_cubit.dart';
-
 
 class BlocInjection extends StatelessWidget {
   final RestClient _apiRestClient = HttpRestClient(
@@ -20,35 +22,22 @@ class BlocInjection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
+    return MultiBlocProvider(
       providers: [
-        RepositoryProvider<RestClient>(
-          create: (context) => _apiRestClient,
-        ),
-        RepositoryProvider<LoginRepository>(
-          create: (context) =>
-              LoginRepository(
-                rest: RepositoryProvider.of<RestClient>(context),
+        BlocProvider<LoginBlocCubit>(
+          create:
+              (context) => LoginBlocCubit(
+                loginRepository: LoginRepository(rest: _apiRestClient),
               ),
         ),
-        RepositoryProvider<HomeRepository>(
-          create: (context) =>
-              HomeRepository(
-              ),
+        BlocProvider<HomeBlocCubit>(
+          create: (context) => HomeBlocCubit(homeRepository: HomeRepository()),
+        ),
+        BlocProvider<LoadBlocCubit>(
+          create: (context) => LoadBlocCubit(loadRepository: LoadRepository()),
         ),
       ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider<LoginBlocCubit>(
-            create: (context) =>
-                LoginBlocCubit(
-                  loginRepository: RepositoryProvider.of<LoginRepository>(
-                      context),
-                ),
-          ),
-        ],
-        child: const AppWidget(),
-      ),
+      child: const AppWidget(),
     );
   }
 }
