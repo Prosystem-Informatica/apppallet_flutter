@@ -18,6 +18,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with Messages<HomePage> {
+  late var travelModel;
+  Timer? _timer;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -26,29 +29,52 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
     super.initState();
   }
 
+  void _startTimer() {
+    _timer?.cancel();
+
+    _timer = Timer(const Duration(seconds: 30), () {
+      BlocProvider.of<HomeBlocCubit>(context).checkPallet();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBlocCubit, HomeBlocState>(
       listener: (context, state) {
         state.status.matchAny(
           success: () async {
-            Timer(const Duration(seconds: 30), () {
-              BlocProvider.of<HomeBlocCubit>(context).checkPallet();
-            });
+            travelModel = state.travelModel;
+
+            _startTimer();
           },
           error: () {
             showError(state.errorMessage ?? "Erro não informado");
           },
           any: () {},
           hasWork: () {
-           state.roadModel!.id == "0" ? null : showSuccess("Existe uma carga pendente !!");
+            state.roadModel!.id == "0"
+                ? null
+                : showSuccess("Existe uma carga pendente !!");
+            BlocProvider.of<HomeBlocCubit>(context).fetchDashboard();
           },
         );
         // TODO: implement listener
       },
       builder: (context, state) {
         if (state.status == HomeStateStatus.loading) {
-          return Center(child: CircularProgressIndicator());
+          return Scaffold(
+            appBar: AppBar(title: const Text("Home")),
+            body: Container(
+              color: Colors.white,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          );
         }
         if (state.status == HomeStateStatus.success) {
           return Scaffold(
@@ -56,17 +82,22 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
             body: BlocBuilder<HomeBlocCubit, HomeBlocState>(
               builder: (context, state) {
                 if (state.status == HomeStateStatus.loading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Container(
+                    color: Colors.white,
+                    child: const Center(child: CircularProgressIndicator()),
+                  );
                 } else if (state.status == HomeStateStatus.error) {
-                  return Center(
-                    child: Text(
-                      state.errorMessage ??
-                          "Ocorreu um erro ao carregar os dados.",
+                  return Container(
+                    color: Colors.white,
+                    child: Center(
+                      child: Text(
+                        state.errorMessage ??
+                            "Ocorreu um erro ao carregar os dados.",
+                      ),
                     ),
                   );
                 } else if (state.status == HomeStateStatus.success &&
-                    state.travelModel != null) {
-                  final dashboardData = state.travelModel!;
+                    travelModel != null) {
                   return Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: GridView.count(
@@ -77,25 +108,25 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
                         buildDashboardCard(
                           context: context,
                           title: "Total Viagens",
-                          value: dashboardData.totalViagens ?? "-",
+                          value: travelModel.totalViagens ?? "-",
                           icon: Icons.directions_bus,
                         ),
                         buildDashboardCard(
                           context: context,
                           title: "Normais",
-                          value: dashboardData.viagensNormal ?? "-",
+                          value: travelModel.viagensNormal ?? "-",
                           icon: Icons.check_circle_outline,
                         ),
                         buildDashboardCard(
                           context: context,
                           title: "Extras",
-                          value: dashboardData.viagensExtra ?? "-",
+                          value: travelModel.viagensExtra ?? "-",
                           icon: Icons.add_circle_outline,
                         ),
                         buildDashboardCard(
                           context: context,
                           title: "Devoluções",
-                          value: dashboardData.totalDev ?? "-",
+                          value: travelModel.totalDev ?? "-",
                           icon: Icons.undo,
                         ),
                       ],
@@ -116,64 +147,9 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
         }
         return Scaffold(
           appBar: AppBar(title: const Text("Home")),
-          body: BlocBuilder<HomeBlocCubit, HomeBlocState>(
-            builder: (context, state) {
-              if (state.status == HomeStateStatus.loading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state.status == HomeStateStatus.error) {
-                return Center(
-                  child: Text(
-                    state.errorMessage ??
-                        "Ocorreu um erro ao carregar os dados.",
-                  ),
-                );
-              } else if (state.status == HomeStateStatus.success &&
-                  state.travelModel != null) {
-                final dashboardData = state.travelModel!;
-                return Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    children: [
-                      buildDashboardCard(
-                        context: context,
-                        title: "Total Viagens",
-                        value: dashboardData.totalViagens ?? "-",
-                        icon: Icons.directions_bus,
-                      ),
-                      buildDashboardCard(
-                        context: context,
-                        title: "Normais",
-                        value: dashboardData.viagensNormal ?? "-",
-                        icon: Icons.check_circle_outline,
-                      ),
-                      buildDashboardCard(
-                        context: context,
-                        title: "Extras",
-                        value: dashboardData.viagensExtra ?? "-",
-                        icon: Icons.add_circle_outline,
-                      ),
-                      buildDashboardCard(
-                        context: context,
-                        title: "Devoluções",
-                        value: dashboardData.totalDev ?? "-",
-                        icon: Icons.undo,
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                return const Center(child: Text("Nenhum dado para exibir."));
-              }
-            },
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Get.toNamed('/load');
-            },
-            child: const Icon(Icons.fire_truck_outlined),
+          body: Container(
+            color: Colors.white,
+            child: Center(child: Text("Nenhum dado para exibir.")),
           ),
         );
       },
