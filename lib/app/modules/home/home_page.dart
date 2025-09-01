@@ -58,9 +58,10 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
           },
           any: () {},
           hasWork: () {
-            state.roadModel!.id == "0"
-                ? null
-                : showSuccess("Existe uma carga pendente !!");
+            if (state.roadModel?.id !='0') {
+              showSuccess('Existe uma carga pendente !!' );
+              Get.toNamed('/load');
+            }
             BlocProvider.of<HomeBlocCubit>(context).fetchDashboard();
           },
         );
@@ -146,7 +147,7 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
           );
         }
         return Scaffold(
-          appBar: AppBar(title: const Text("Home")),
+          appBar: AppBar(title: const Text("Total de Viagens")),
           body: Container(
             color: Colors.white,
             child: Center(child: Text("Nenhum dado para exibir.")),
