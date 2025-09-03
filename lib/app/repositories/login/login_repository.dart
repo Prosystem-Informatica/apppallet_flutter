@@ -64,6 +64,7 @@ class LoginRepository implements ILoginRepository {
         jsonData[0]['EMPRESA'].toString().toLowerCase(),
       );
 
+      await prefs.setBool("isLogged", true);
       var res = await LoginModel.fromJson(jsonData[0]);
 
       return res;

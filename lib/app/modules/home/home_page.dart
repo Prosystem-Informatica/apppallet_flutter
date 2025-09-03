@@ -1,13 +1,12 @@
 import 'dart:async';
-
 import 'package:apppallet_flutter/app/modules/home/widget/card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/ui/helpers/messages.dart';
 import 'cubit/home_bloc_cubit.dart';
-import '../../repositories/home/home_repository.dart';
 import 'cubit/home_bloc_state.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,15 +22,12 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    BlocProvider.of<HomeBlocCubit>(context).fetchDashboard();
-
     super.initState();
+    BlocProvider.of<HomeBlocCubit>(context).fetchDashboard();
   }
 
   void _startTimer() {
     _timer?.cancel();
-
     _timer = Timer(const Duration(seconds: 30), () {
       BlocProvider.of<HomeBlocCubit>(context).checkPallet();
     });
@@ -43,6 +39,13 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
     super.dispose();
   }
 
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Get.offAllNamed('/login');
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBlocCubit, HomeBlocState>(
@@ -50,7 +53,6 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
         state.status.matchAny(
           success: () async {
             travelModel = state.travelModel;
-
             _startTimer();
           },
           error: () {
@@ -58,43 +60,50 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
           },
           any: () {},
           hasWork: () {
-            if (state.roadModel?.id !='0') {
-              showSuccess('Existe uma carga pendente !!' );
+            if (state.roadModel?.id != '0') {
+              showSuccess('Existe uma carga pendente !!');
               Get.toNamed('/load');
             }
             BlocProvider.of<HomeBlocCubit>(context).fetchDashboard();
           },
         );
-        // TODO: implement listener
       },
       builder: (context, state) {
         if (state.status == HomeStateStatus.loading) {
           return Scaffold(
-            appBar: AppBar(title: const Text("Home")),
-            body: Container(
-              color: Colors.white,
-              child: Center(child: CircularProgressIndicator()),
+            appBar: AppBar(
+              title: const Text("Home"),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: _logout,
+                ),
+              ],
             ),
+            body: const Center(child: CircularProgressIndicator()),
           );
         }
+
         if (state.status == HomeStateStatus.success) {
           return Scaffold(
-            appBar: AppBar(title: const Text("Home")),
+            appBar: AppBar(
+              title: const Text("Home"),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: _logout,
+                ),
+              ],
+            ),
             body: BlocBuilder<HomeBlocCubit, HomeBlocState>(
               builder: (context, state) {
                 if (state.status == HomeStateStatus.loading) {
-                  return Container(
-                    color: Colors.white,
-                    child: const Center(child: CircularProgressIndicator()),
-                  );
+                  return const Center(child: CircularProgressIndicator());
                 } else if (state.status == HomeStateStatus.error) {
-                  return Container(
-                    color: Colors.white,
-                    child: Center(
-                      child: Text(
-                        state.errorMessage ??
-                            "Ocorreu um erro ao carregar os dados.",
-                      ),
+                  return Center(
+                    child: Text(
+                      state.errorMessage ??
+                          "Ocorreu um erro ao carregar os dados.",
                     ),
                   );
                 } else if (state.status == HomeStateStatus.success &&
@@ -146,12 +155,18 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
             ),
           );
         }
+
         return Scaffold(
-          appBar: AppBar(title: const Text("Total de Viagens")),
-          body: Container(
-            color: Colors.white,
-            child: Center(child: Text("Nenhum dado para exibir.")),
+          appBar: AppBar(
+            title: const Text("Total de Viagens"),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: _logout,
+              ),
+            ],
           ),
+          body: const Center(child: Text("Nenhum dado para exibir.")),
         );
       },
     );
