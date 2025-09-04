@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:apppallet_flutter/app/modules/home/widget/card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -8,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/ui/helpers/messages.dart';
 import 'cubit/home_bloc_cubit.dart';
 import 'cubit/home_bloc_state.dart';
+import 'widget/card_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,8 +31,7 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-
-      _username = prefs.getString("login");
+      _username = prefs.getString("login") ?? '';
     });
   }
 
@@ -57,6 +56,8 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return BlocConsumer<HomeBlocCubit, HomeBlocState>(
       listener: (context, state) {
         state.status.matchAny(
@@ -91,16 +92,15 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (_username != null)
+              if (_username != null && _username!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     "Bem-vindo, $_username",
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary
-                    ),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary),
                   ),
                 ),
               Expanded(
@@ -127,25 +127,25 @@ class _HomePageState extends State<HomePage> with Messages<HomePage> {
                             buildDashboardCard(
                               context: context,
                               title: "Total Viagens",
-                              value: travelModel.totalViagens ?? "-",
+                              value: travelModel.totalViagens ?? "0",
                               icon: Icons.directions_bus,
                             ),
                             buildDashboardCard(
                               context: context,
                               title: "Normais",
-                              value: travelModel.viagensNormal ?? "-",
+                              value: travelModel.viagensNormal ?? "0",
                               icon: Icons.check_circle_outline,
                             ),
                             buildDashboardCard(
                               context: context,
                               title: "Extras",
-                              value: travelModel.viagensExtra ?? "-",
+                              value: travelModel.viagensExtra ?? "0",
                               icon: Icons.add_circle_outline,
                             ),
                             buildDashboardCard(
                               context: context,
                               title: "Devoluções",
-                              value: travelModel.totalDev ?? "-",
+                              value: travelModel.totalDev ?? "0",
                               icon: Icons.undo,
                             ),
                           ],

@@ -10,6 +10,7 @@ import 'model/login_model.dart';
 class LoginRepository implements ILoginRepository {
   final RestClient _rest;
   late SharedPreferences prefs;
+
   LoginRepository({required RestClient rest}) : _rest = rest;
 
   @override
@@ -20,23 +21,28 @@ class LoginRepository implements ILoginRepository {
           'http://prosystem.dyndns-work.com:9090/datasnap/rest/TserverAPPnfe/LoginEmpresa/09334805000146';
 
       var response = await http.get(Uri.parse(url));
+      if (response.statusCode != 200) {
+        throw Exception("Erro ao buscar URL: ${response.statusCode}");
+      }
 
       var jsonData = jsonDecode(response.body);
-      print("Json do check> ${jsonData}");
+      print("Json do check> $jsonData");
 
-      await prefs.setString(
-        'host',
-        jsonData[0]['SERVIDOR'].toString().toLowerCase(),
-      );
-      await prefs.setString(
-        'port',
-        jsonData[0]['PORTA'].toString().toLowerCase(),
-      );
-
-      return jsonData;
+      if (jsonData is List && jsonData.isNotEmpty) {
+        await prefs.setString(
+          'host',
+          jsonData[0]['SERVIDOR']?.toString().toLowerCase() ?? '',
+        );
+        await prefs.setString(
+          'port',
+          jsonData[0]['PORTA']?.toString().toLowerCase() ?? '',
+        );
+      } else {
+        throw Exception("Resposta inválida do checkUrl");
+      }
     } catch (e) {
-      log(e.toString());
-      //return ValidationModel();
+      log("Erro checkUrl: $e");
+      rethrow;
     }
   }
 
@@ -44,33 +50,45 @@ class LoginRepository implements ILoginRepository {
   Future<LoginModel> login(String login, String password) async {
     try {
       prefs = await SharedPreferences.getInstance();
-      var host = await prefs.getString("host");
-      var port = await prefs.getString("port");
+
+      var host = prefs.getString("host");
+      var port = prefs.getString("port");
+
+      if (host == null || port == null || host.isEmpty || port.isEmpty) {
+        throw Exception("Host ou porta não configurados");
+      }
+
       var url =
           'http://$host:$port/datasnap/rest/TserverAPPnfe/LoginPalete/$login/$password';
-
       var response = await http.get(Uri.parse(url));
 
+      if (response.statusCode != 200) {
+        throw Exception("Erro no login: ${response.statusCode}");
+      }
+
       var jsonData = jsonDecode(response.body);
-      print("Json do login > ${jsonData}");
+      print("Json do login > $jsonData");
 
-      await prefs.setString(
-        'codigo',
-        jsonData[0]['CODIGO'].toString().toLowerCase(),
-      );
+      if (jsonData is! List || jsonData.isEmpty) {
+        throw Exception("Login ou senha invalidos");
+      }
 
-      await prefs.setString(
-        'empresa',
-        jsonData[0]['EMPRESA'].toString().toLowerCase(),
-      );
+      final data = jsonData[0];
 
+      if (data['VALIDADO'] != 'T') {
+        throw Exception("Login ou senha invalidos");
+      }
+
+      await prefs.setString('codigo', data['CODIGO']?.toString() ?? '');
+      await prefs.setString('empresa', data['EMPRESA']?.toString() ?? '');
       await prefs.setString("login", login);
       await prefs.setBool("isLogged", true);
-      var res = await LoginModel.fromJson(jsonData[0]);
-      return LoginModel.fromJson(jsonData[0]);
+
+      return LoginModel.fromJson(data);
     } catch (e) {
       log("Erro login: $e");
       rethrow;
+
     }
   }
 }
