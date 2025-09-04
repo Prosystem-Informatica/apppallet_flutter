@@ -39,9 +39,9 @@ class LoginBlocCubit extends Cubit<LoginBlocState> {
       } else if (res.validado == "F") {
         emit(
           state.copyWith(
-            status: LoginStateStatus.success,
+            status: LoginStateStatus.error,
             loginModel: res,
-            successMessage: "Usuário ou Senha incorreto !",
+            errorMessage: "Usuário ou Senha incorreto !",
           ),
         );
       }
