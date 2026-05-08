@@ -19,7 +19,7 @@ class LoadRepository {
       final url =
           'http://$host:$port/datasnap/rest/TServerAPPnfe/VerificaCarga/$empresa/$codigo';
       final response = await http.get(Uri.parse(url));
-      print("RESPONSE > ${response.body}");
+      print("VerificaCarga > ${response.body}");
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         print("Oq tem no JSON > ${jsonData}");

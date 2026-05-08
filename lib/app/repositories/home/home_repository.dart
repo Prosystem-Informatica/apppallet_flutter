@@ -19,7 +19,7 @@ class HomeRepository {
       final url =
           'http://$host:$port/datasnap/rest/TServerAPPnfe/VerificaCarga/$empresa/$codigo';
       final response = await http.get(Uri.parse(url));
-      print("RESPONSE > ${response.body}");
+      print("Verifica Carga > ${response.body}");
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         print("Oq tem no JSON > ${jsonData}");
@@ -44,7 +44,7 @@ class HomeRepository {
       final url =
           'http://$host:$port/datasnap/rest/TServerAPPnfe/Viagens_Dev/$empresa/$codigo';
       final response = await http.get(Uri.parse(url));
-      print("RESPONSE > ${response.body}");
+      print("Viagens_Dev > ${response.body}");
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         return TravelModel.fromJson(jsonData);

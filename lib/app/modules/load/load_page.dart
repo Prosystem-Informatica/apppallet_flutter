@@ -20,6 +20,8 @@ class _LoadPageState extends State<LoadPage> with Messages<LoadPage> {
   final placaController = TextEditingController();
   final entregaController = TextEditingController();
   final devolucaoController = TextEditingController();
+  final saldoController = TextEditingController();
+  final qtdMaxController = TextEditingController();
 
   bool entrega = false;
   bool devolucao = false;
@@ -34,6 +36,8 @@ class _LoadPageState extends State<LoadPage> with Messages<LoadPage> {
     placaController.dispose();
     entregaController.dispose();
     devolucaoController.dispose();
+    saldoController.dispose();
+    qtdMaxController.dispose();
     super.dispose();
   }
 
@@ -73,6 +77,8 @@ class _LoadPageState extends State<LoadPage> with Messages<LoadPage> {
             state.roadModel!.id == "0"
                 ? showSuccess(state.successMessage ?? "")
                 : null;
+            saldoController.text = state.roadModel!.saldo ?? "";
+            qtdMaxController.text = state.roadModel!.quantMax ?? "";
           },
           saved: () {
             showSuccess(state.successMessage ?? "Salvo com sucesso !!!");
@@ -138,6 +144,37 @@ class _LoadPageState extends State<LoadPage> with Messages<LoadPage> {
                                   : null,
                     ),
                     const SizedBox(height: 16),
+                    TextFormField(
+                      enabled: false,
+                      controller: saldoController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: "Saldo",
+                        border: OutlineInputBorder(),
+                      ),
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? "Informe a entrega"
+                                  : null,
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextFormField(
+                      enabled: false,
+                      controller: qtdMaxController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: "Quantidade Máxima",
+                        border: OutlineInputBorder(),
+                      ),
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? "Informe a devolução"
+                                  : null,
+                    ),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
@@ -173,7 +210,7 @@ class _LoadPageState extends State<LoadPage> with Messages<LoadPage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+
                     const SizedBox(height: 16),
                     /* Row(
                       children: [

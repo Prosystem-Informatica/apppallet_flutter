@@ -5,6 +5,8 @@ class RoadModel {
   String? placa;
   String? quant;
   String? quantDv;
+  String? quantMax;
+  String? saldo;
 
   RoadModel({
     this.id,
@@ -13,6 +15,8 @@ class RoadModel {
     this.placa,
     this.quant,
     this.quantDv,
+    this.quantMax,
+    this.saldo,
   });
 
   RoadModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +26,8 @@ class RoadModel {
     placa = json['PLACA'];
     quant = json['QUANT'];
     quantDv = json['QUANTDV'];
+    quantMax = json['QTDMAX'];
+    saldo = json['SALDO'];
   }
 
   Map<String, dynamic> toJson() {
@@ -32,6 +38,8 @@ class RoadModel {
     dataMap['PLACA'] = placa;
     dataMap['QUANT'] = quant;
     dataMap['QUANTDV'] = quantDv;
+    dataMap['QTDMAX'] = quantMax;
+    dataMap['SALDO'] = saldo;
     return dataMap;
   }
 }
