@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> with Messages<LoginPage> {
           error: () {
             showError(state.errorMessage ?? "Erro não informado");
           },
-          any: () {Get.toNamed("/home");},
+          any: () {/*Get.toNamed("/home")*/;},
         );
       },
       builder: (context, state) {
